@@ -6,14 +6,18 @@ phases:
       nodejs: 20
     commands:
       - echo Installing frontend dependencies
-      - cd frontend
+      - cd "$CODEBUILD_SRC_DIR/frontend"
       - npm install
   build:
     commands:
       - echo Building frontend
+      - cd "$CODEBUILD_SRC_DIR/frontend"
       - npm run build
+      - chmod +x "$CODEBUILD_SRC_DIR/deploy-scripts/"*.sh
 
 artifacts:
-  base-directory: frontend/dist
+  base-directory: .
   files:
-    - '**/*'
+    - appspec.yml
+    - deploy-scripts/**/*
+    - frontend/dist/**/*
