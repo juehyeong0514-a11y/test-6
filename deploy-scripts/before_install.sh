@@ -8,6 +8,12 @@ if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '
   systemctl stop bookapp || true
 fi
 
+if command -v lsof >/dev/null 2>&1; then
+  lsof -ti:8080 | xargs -r kill -9
+elif command -v fuser >/dev/null 2>&1; then
+  fuser -k 8080/tcp || true
+fi
+
 mkdir -p "$APP_DIR"
 mkdir -p "$WEB_ROOT"
 find "$WEB_ROOT" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
