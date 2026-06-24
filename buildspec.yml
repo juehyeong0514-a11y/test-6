@@ -13,6 +13,10 @@ phases:
       - echo Building frontend
       - cd "$CODEBUILD_SRC_DIR/frontend"
       - npm run build
+      - echo Building backend
+      - cd "$CODEBUILD_SRC_DIR/backend"
+      - chmod +x ./gradlew
+      - ./gradlew clean bootJar -x test
       - chmod +x "$CODEBUILD_SRC_DIR/deploy-scripts/"*.sh
 
 artifacts:
@@ -21,3 +25,4 @@ artifacts:
     - appspec.yml
     - deploy-scripts/**/*
     - frontend/dist/**/*
+    - backend/build/libs/*.jar

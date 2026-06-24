@@ -1,6 +1,6 @@
 import { authHeaders } from './auth';
 
-const BASE_URL = 'http://localhost:8080/books';
+const BASE_URL = '/api/books';
 
 // CUD 요청에 인증 헤더 자동 추가
 function jsonHeaders() {

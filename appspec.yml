@@ -4,6 +4,8 @@ os: linux
 files:
   - source: /frontend/dist
     destination: /var/www/html
+  - source: /backend/build/libs
+    destination: /opt/bookapp
 
 file_exists_behavior: OVERWRITE
 

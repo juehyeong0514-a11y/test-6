@@ -1,4 +1,4 @@
-const AUTH_URL = 'http://localhost:8080/auth';
+const AUTH_URL = '/api/auth';
 const TOKEN_KEY = 'auth_token';
 const USERNAME_KEY = 'auth_username';
 
