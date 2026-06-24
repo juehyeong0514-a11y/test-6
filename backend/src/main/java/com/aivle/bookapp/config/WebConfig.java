@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/books/**") // 도서 관련 모든 경로
                 .excludePathPatterns("/auth/**", "/h2-console/**"); // 인증/H2 콘솔은 면제
         // GET 요청은 인터셉터 안에서 별도로 통과시킴
+    }
+
+    @Override
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:/opt/bookapp/uploads/");
     }
 }

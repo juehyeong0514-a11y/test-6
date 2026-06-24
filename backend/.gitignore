@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Local backups ###
+src/main/resources/data.sql.bak

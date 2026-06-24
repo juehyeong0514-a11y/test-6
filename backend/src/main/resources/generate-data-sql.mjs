@@ -21,12 +21,18 @@ function escapeSql(text) {
   return String(text).replace(/'/g, "''"); // SQL 작은따옴표 이스케이프
 }
 
+function sanitizeCoverImageUrl(coverImageUrl) {
+  if (!coverImageUrl) return '';
+  if (String(coverImageUrl).startsWith('data:image')) return '';
+  return coverImageUrl;
+}
+
 function buildInsert(book) {
   const title = escapeSql(book.title);
   const author = escapeSql(book.author);
   const category = escapeSql(book.category || '소설');
   const content = escapeSql(book.content || '');
-  const coverImageUrl = escapeSql(book.coverImageUrl || '');
+  const coverImageUrl = escapeSql(sanitizeCoverImageUrl(book.coverImageUrl));
 
   return `INSERT INTO books (title, author, category, content, cover_image_url, created_at, updated_at)
 SELECT '${title}', '${author}', '${category}', '${content}', '${coverImageUrl}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP

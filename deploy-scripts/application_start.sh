@@ -46,7 +46,7 @@ ensure_java
 if ! command -v curl >/dev/null 2>&1; then
   install_package curl
 fi
-mkdir -p "$APP_DIR/data"
+mkdir -p "$APP_DIR/data" "$APP_DIR/uploads/covers"
 
 JAR_SOURCE="$(find "$APP_DIR" -maxdepth 1 -type f -name '*.jar' ! -name '*plain*.jar' | head -n 1)"
 if [ -z "$JAR_SOURCE" ]; then
@@ -113,6 +113,11 @@ server {
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /uploads/ {
+        alias $APP_DIR/uploads/;
+        try_files \$uri =404;
     }
 
     location / {
