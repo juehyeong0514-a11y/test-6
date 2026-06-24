@@ -102,11 +102,13 @@ cat >/etc/nginx/conf.d/bookapp.conf <<NGINX
 server {
     listen 80;
     server_name _;
+    client_max_body_size 30m;
 
     root $WEB_ROOT;
     index index.html;
 
     location /api/ {
+        client_max_body_size 30m;
         proxy_pass http://127.0.0.1:8080/;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
