@@ -4,6 +4,7 @@ set -euo pipefail
 APP_DIR="${APP_DIR:-/opt/bookapp}"
 WEB_ROOT="${WEB_ROOT:-/var/www/html}"
 APP_JAR="$APP_DIR/bookapp.jar"
+JAVA_BIN=""
 
 install_package() {
   local package_name="$1"
@@ -23,10 +24,12 @@ install_package() {
 
 ensure_java() {
   if command -v java >/dev/null 2>&1; then
+    JAVA_BIN="$(command -v java)"
     return
   fi
 
   install_package java-17-amazon-corretto-headless || install_package java-17-openjdk-headless || install_package openjdk-17-jre-headless
+  JAVA_BIN="$(command -v java)"
 }
 
 reload_service() {
@@ -40,6 +43,10 @@ reload_service() {
 }
 
 ensure_java
+if ! command -v curl >/dev/null 2>&1; then
+  install_package curl
+fi
+mkdir -p "$APP_DIR/data"
 
 JAR_SOURCE="$(find "$APP_DIR" -maxdepth 1 -type f -name '*.jar' ! -name '*plain*.jar' | head -n 1)"
 if [ -z "$JAR_SOURCE" ]; then
@@ -59,7 +66,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/java -jar $APP_JAR
+ExecStart=$JAVA_BIN -jar $APP_JAR
 Restart=always
 RestartSec=10
 SuccessExitStatus=143
@@ -71,6 +78,21 @@ SERVICE
 systemctl daemon-reload
 systemctl enable bookapp
 systemctl restart bookapp
+
+for i in $(seq 1 30); do
+  if command -v curl >/dev/null 2>&1 && curl -fsS http://127.0.0.1:8080/books >/dev/null; then
+    break
+  fi
+
+  if [ "$i" -eq 30 ]; then
+    echo "Backend did not become ready on port 8080"
+    systemctl status bookapp --no-pager || true
+    journalctl -u bookapp -n 80 --no-pager || true
+    exit 1
+  fi
+
+  sleep 2
+done
 
 if ! command -v nginx >/dev/null 2>&1; then
   install_package nginx
