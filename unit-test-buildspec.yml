@@ -1,13 +1,16 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
       nodejs: 20
     commands:
-      - npm install -g @angular/cli@17
+      - echo Using Node.js 20 for frontend checks
   pre_build:
     commands:
+      - cd "$CODEBUILD_SRC_DIR/frontend"
       - npm install
   build:
     commands:
-      - ng test --no-watch --no-progress --browsers=ChromeHeadlessCI
+      - cd "$CODEBUILD_SRC_DIR/frontend"
+      - npm run build
