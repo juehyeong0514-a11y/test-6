@@ -9,6 +9,12 @@ if [ ! -f "$WEB_ROOT/index.html" ]; then
 fi
 
 if command -v systemctl >/dev/null 2>&1; then
+  systemctl is-active --quiet nginx || {
+    echo "nginx service is not active"
+    systemctl status nginx --no-pager || true
+    exit 1
+  }
+
   systemctl is-active --quiet bookapp || {
     echo "bookapp service is not active"
     systemctl status bookapp --no-pager || true
@@ -17,12 +23,13 @@ if command -v systemctl >/dev/null 2>&1; then
 fi
 
 if command -v curl >/dev/null 2>&1; then
-  curl -fsS http://localhost/ >/dev/null || {
-    echo "HTTP validation failed for http://localhost/"
+  curl -fsS http://127.0.0.1:8080/books >/dev/null || {
+    echo "Backend validation failed for http://127.0.0.1:8080/books"
     exit 1
   }
-  curl -fsS http://localhost/api/books >/dev/null || {
-    echo "Backend validation failed for http://localhost/api/books"
+
+  curl -fsS http://127.0.0.1/ >/dev/null || {
+    echo "Frontend validation failed for http://127.0.0.1/"
     exit 1
   }
 fi

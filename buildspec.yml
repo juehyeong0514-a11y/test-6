@@ -22,7 +22,6 @@ phases:
 artifacts:
   base-directory: .
   files:
-    - 'dist/test-6/**/*'
     - appspec.yml
     - deploy-scripts/**/*
     - frontend/dist/**/*
